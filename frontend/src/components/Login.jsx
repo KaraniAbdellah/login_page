@@ -1,8 +1,10 @@
 
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import axios from "axios";
 
+
 export default function Login() {
+    const navigate = useNavigate();
     const handleLogin = (e) => {
         e.preventDefault();
         let email = document.querySelector(".email");
@@ -19,8 +21,12 @@ export default function Login() {
         // Check If User Exit In Database or No
         if (check) {
             axios.get(`http://127.0.0.1:3000/GetUser/${password.value}/${email.value}`).then((res) => {
-                console.log(res.data.isExit);
-                console.log(password.value);
+                if (!res.data.isExit) {
+                    let message = document.querySelector(".message");
+                    message.textContent = "Email or Password Incorrect";
+                } else {
+                    navigate("/");
+                }
             });
         }
 
@@ -47,6 +53,7 @@ export default function Login() {
                 required
                 className="w-full password px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               />
+              <p className="message mb-2 text-md text-red-600"></p>
             </div>
             <button onClick={(e) => handleLogin(e)} type="submit" className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Login</button>
             <Link to="/signup">
