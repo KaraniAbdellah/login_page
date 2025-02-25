@@ -1,0 +1,14 @@
+
+.App {
+  height: 100vh;
+}
+
+
+
+.InvalidInput {
+  border: 2px red solid;
+}
+.ValidInput {
+  border: 2px green solid;
+}
+
