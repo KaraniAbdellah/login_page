@@ -4,11 +4,11 @@ import axios from "axios";
 
 
 export default function Signup() {
-    console.log();
     const navigate = useNavigate();
-    const handleSubmit = () => {
-
-        if (document.cookie == "") {
+    const handleSubmit = (e) => {
+      e.preventDefault();
+        console.log(document.cookie);
+        if (document.cookie === "") {
             const email = document.querySelector("input.email");
             const password = document.querySelector("input.password");
             const user = {
@@ -20,6 +20,7 @@ export default function Signup() {
                 console.log(res.data);
                 // Store Token To Cookies
                 document.cookie = `usertoken=${res.data}`;
+                navigate("/");
             });
         } else {
             navigate("/");
@@ -67,7 +68,7 @@ export default function Signup() {
                 className="w-full password px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               />
             </div>
-            <button type="submit" onClick={() => handleSubmit()} className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Sign Up</button>
+            <button type="submit" onClick={(e) => handleSubmit(e)} className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Sign Up</button>
             <Link to="/login">
                 <p className="cursor-pointer text-center mt-2 text-blue-700 font-semibold">Already Have An Account ?</p>
             </Link>
