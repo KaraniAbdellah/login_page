@@ -1,42 +1,40 @@
 
 import {Link, useNavigate} from "react-router";
 import axios from "axios";
-import { useEffect } from "react";
 
 
 export default function Login() {
     const navigate = useNavigate();
     // Verfied If The USer Has A Token Or Not
-    useEffect(() => {
-      if (document.cookie !== '') {
-        navigate("/");
-      }
-    }, []);
-    const handleLogin = (e) => {
-        e.preventDefault();
-        let email = document.querySelector(".email");
-        let password = document.querySelector(".password");
+    // useEffect(() => {
+    //   if (document.cookie !== '') {
+    //     navigate("/");
+    //   }
+    // }, []);
 
-        axios.get(`http://127.0.0.1:3000/GetUser/${password.value}/${email.value}`).then((res) => {
-            if (!res.data.isExit) {
+    async function handleLogin(e) {
+        e.preventDefault();
+
+        const email = document.querySelector(".email");
+        const password = document.querySelector(".password");
+        if (email.value == "") {
+          email.classList.toggle("InvalidInput");
+        }
+        if (password.value == "") {
+          password.classList.toggle("InvalidInput");
+        }
+        if (email.value !== "" && password.value !== "") {
+          await axios.get(`http://127.0.0.1:3000/CheckUser/${password.value}/${email.value}`).then((res) => {
+              if (!res.data.isExit) {
                 let message = document.querySelector(".message");
                 message.textContent = "Email or Password Incorrect";
                 email.classList.add("InvalidInput");
                 password.classList.add("InvalidInput");
-            }
-        });
-
-        const user = {
-          email: email.value,
-          password: password.value,
+              } else {
+                navigate("/");
+              }
+          });
         }
-        axios.post("http://127.0.0.1:3000/AddUser", user).then((res) => {
-          console.log("Data Send to Database Sucefully");
-          console.log(res.data);
-          // Store Token To Cookies
-          document.cookie = `usertoken=${res.data}`;
-          navigate("/");
-      });
     }
     return (
       <div className="">

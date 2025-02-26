@@ -3,6 +3,7 @@ import express from "express";
 import User from "../model/User.js";
 import bcrypt, { hash } from "bcrypt";
 import crypto  from "crypto";
+import 'dotenv/config'
 import jwt from "jsonwebtoken";
 import { error } from "console";
 
@@ -21,19 +22,15 @@ router.post('/AddUser', async function (req, res) {
             password: passwordHashed
         }
         const NewUser = new User(user);
-
         // Generate A Token
-        const scretKey =  crypto.randomBytes(32).toString('hex');
+        const scretKey =  process.env.SCRET_KEY;
         const token = jwt.sign({
             email: req.body.email
         }, scretKey, {expiresIn: "10min"});
-
         // Save Data To Database
         await NewUser.save();
-
         // Send Token To Client Side
-        res.status(201).json(token);
-
+        res.status(201).json({ token });
         console.log("✅ Success Adding User")
     } catch (error) {
         res.status(500).send({message: "❌ Failed Adding User"});
@@ -42,6 +39,7 @@ router.post('/AddUser', async function (req, res) {
 });
 
 
+// Check The password If It is Correct
 async function isThisPassword(password, hashPassword) {
     return new Promise((resolve, reject) => {
         bcrypt.compare(password, hashPassword, function(err, result) {
@@ -54,10 +52,10 @@ async function isThisPassword(password, hashPassword) {
     });
 }
 
-router.get("/GetUser/:password/:email", async (req, res) => {
+// Check If The Login Coorect
+router.get("/CheckUser/:password/:email", async (req, res) => {
     try {
         const users = await User.find();
-        
         const check = false;
         for (let user of users) {
             const isPasswordValid = await isThisPassword(req.params.password, user.password);
@@ -66,14 +64,27 @@ router.get("/GetUser/:password/:email", async (req, res) => {
                 return res.status(200).json({isExit: true});
             }
         }
-        return res.status(200).json({isExit: false});
-        
         console.log("❌ No user found with provided email and password");
+        return res.status(200).json({isExit: false});
     } catch (error) {
         res.status(500).send({ message: "❌ Failed Getting Users" });
         console.log("❌ Failed Getting Users" + error);
     }
 });
+
+
+// Check The Email
+router.post("/CheckEmail", async (req, res) => {
+    try {
+        const email = req.body;
+        const user = await User.findOne(email);
+        if (user) return res.status(201).json({ isExit: true });
+        res.status(200).json({ isExit: false });
+    } catch (error) {
+        console.log("Error Here!!! --> " + error);
+    }
+});
+
 
 
 

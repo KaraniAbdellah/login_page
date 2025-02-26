@@ -1,6 +1,17 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export default function Home() {
-  return (
-    <h1 className="font-semibold text-4xl">Comming Soon</h1>
-  );
+    // Verfiy If The User Has A Token
+    const navigate = useNavigate();
+    console.log(document.cookie);
+    useEffect(() => {
+        if (document.cookie == "") {
+            navigate("/login");
+        }
+    }, []);
+
+    return (
+        <h1 className="font-semibold text-4xl">Comming Soon</h1>
+    );
 }
