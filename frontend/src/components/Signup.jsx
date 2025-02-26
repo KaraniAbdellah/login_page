@@ -71,6 +71,7 @@ export default function Signup() {
                 email: email.value,
                 password: password.value,
             }
+
             await axios.post("http://127.0.0.1:3000/AddUser", user).then((res) => {
                 console.log("Data Send to Database Sucefully");
                 console.log(res.data);
@@ -78,6 +79,7 @@ export default function Signup() {
                 document.cookie = `usertoken=${res.data.token}`;
                 navigate("/login");
             });
+            
         }
     }
 

@@ -12,6 +12,17 @@ export default function Login() {
     //   }
     // }, []);
 
+    // Generate Token
+    async function GenerateToken() {
+      return await axios.get("http://127.0.0.1:3000/GenerateToken").then((res) => {
+        document.cookie = `usertoken=${res.data.token}`;
+      });
+    }
+
+    async function handleLoginWithGoogle(e) {
+      console.log("handle log in with google" + e.target);
+    }
+
     async function handleLogin(e) {
         e.preventDefault();
 
@@ -30,8 +41,13 @@ export default function Login() {
                 message.textContent = "Email or Password Incorrect";
                 email.classList.add("InvalidInput");
                 password.classList.add("InvalidInput");
-              } else {
-                navigate("/");
+              } else if (document.cookie === "") {
+                  // Generate User Token
+                  GenerateToken().then(() => {
+                    navigate("/");
+                  });
+                } else if (document.cookie !== "") {
+                  navigate("/");
               }
           });
         }
@@ -53,6 +69,7 @@ export default function Login() {
             <div className="mb-4">
               <label className="block text-sm font-medium text-start mb-2">Password</label>
               <input
+                min="8"
                 type="password"
                 placeholder="Enter your password"
                 required
@@ -60,8 +77,11 @@ export default function Login() {
               />
               <p className="message mb-2 text-md text-red-600"></p>
             </div>
-            <button onClick={(e) => handleLogin(e)} type="submit" className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Login</button>
-            <Link to="/signup">
+            <button onClick={(e) => handleLogin(e)} type="submit" className="w-full mb-2 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Login</button>
+            
+            <button onClick={(e) => handleLoginWithGoogle(e)} className="w-full py-2 bg-zinc-600 text-white font-semibold rounded-lg hover:bg-blue-700">Login In With Google</button>
+
+            <Link to="/">
                 <p className="cursor-pointer text-center mt-2 text-blue-700 font-semibold">Do not  Have An Account ?</p>
             </Link>
           </form>

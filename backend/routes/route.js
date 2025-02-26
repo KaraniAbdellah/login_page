@@ -9,6 +9,8 @@ import { error } from "console";
 
 
 
+
+
 const router = express.Router();
 
 // Method for add user
@@ -22,11 +24,13 @@ router.post('/AddUser', async function (req, res) {
             password: passwordHashed
         }
         const NewUser = new User(user);
+        
         // Generate A Token
         const scretKey =  process.env.SCRET_KEY;
         const token = jwt.sign({
             email: req.body.email
         }, scretKey, {expiresIn: "10min"});
+
         // Save Data To Database
         await NewUser.save();
         // Send Token To Client Side
@@ -86,6 +90,12 @@ router.post("/CheckEmail", async (req, res) => {
 });
 
 
-
+// Generate A Token
+router.get("/GenerateToken", async (req, res) => {
+    const scretKey =  process.env.SCRET_KEY;
+    const token = jwt.sign({
+    }, scretKey, {expiresIn: "10min"});
+    res.status(201).json({ token });
+});
 
 export default router;

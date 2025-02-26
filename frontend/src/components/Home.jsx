@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 export default function Home() {
     // Verfiy If The User Has A Token
     const navigate = useNavigate();
-    console.log(document.cookie);
     useEffect(() => {
         if (document.cookie == "") {
             navigate("/login");
