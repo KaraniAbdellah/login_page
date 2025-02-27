@@ -13,6 +13,7 @@ import { error } from "console";
 
 const router = express.Router();
 
+
 // Method for add user
 router.post('/AddUser', async function (req, res) {
     console.log("request come from axios for adding user");
